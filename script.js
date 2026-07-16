@@ -4,19 +4,31 @@ const search = document.getElementById("search");
 let companies = [];
 
 async function load() {
-  const r = await fetch(API_URL);
-  companies = await r.json();
-  render(companies);
+  try {
+    const r = await fetch(API_URL);
+    companies = await r.json();
+
+    console.log(companies);
+
+    render(companies);
+  } catch (e) {
+    list.innerHTML = "<p>Error loading data.</p>";
+    console.error(e);
+  }
 }
 
 function render(data) {
   list.innerHTML = "";
 
-  data.forEach(c => {
+  if (data.length === 0) {
+    list.innerHTML = "<p>No companies found.</p>";
+    return;
+  }
 
+  data.forEach(c => {
     list.innerHTML += `
       <div class="card">
-        <h2>${c["Company Name"]}</h2>
+        <h2>${c["Company Name"] || ""}</h2>
 
         <div class="badge">
           ${c["Select your business category"] || ""}
@@ -34,12 +46,10 @@ function render(data) {
 
       </div>
     `;
-
   });
 }
 
 search.oninput = function () {
-
   const text = this.value.toLowerCase();
 
   render(
@@ -47,7 +57,6 @@ search.oninput = function () {
       JSON.stringify(c).toLowerCase().includes(text)
     )
   );
-
 };
 
 load();
