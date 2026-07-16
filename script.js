@@ -8,8 +8,6 @@ async function load() {
     const r = await fetch(API_URL);
     companies = await r.json();
 
-    console.log(companies);
-
     render(companies);
   } catch (e) {
     list.innerHTML = "<p>Error loading data.</p>";
@@ -20,37 +18,43 @@ async function load() {
 function render(data) {
   list.innerHTML = "";
 
-  if (data.length === 0) {
+  if (!data || data.length === 0) {
     list.innerHTML = "<p>No companies found.</p>";
     return;
   }
 
   data.forEach(c => {
 
+    // Remove spaces from all column names
+    const clean = {};
+    Object.keys(c).forEach(key => {
+      clean[key.trim()] = c[key];
+    });
+
     list.innerHTML += `
       <div class="card">
 
-        <h2>${c["Company Name"] || ""}</h2>
+        <h2>${clean["Company Name"] || ""}</h2>
 
         <div class="badge">
-          ${c["Select your business category"] || ""}
+          ${clean["Select your business category"] || clean["Business Category"] || ""}
         </div>
 
-        <p><b>City:</b> ${c["City"] || ""}</p>
+        <p><b>City:</b> ${clean["City"] || clean["city"] || ""}</p>
 
-        <p><b>State:</b> ${c["State"] || ""}</p>
+        <p><b>State:</b> ${clean["State"] || clean["state"] || ""}</p>
 
-        <p><b>Contact:</b> ${c["Contact Person"] || ""}</p>
+        <p><b>Contact:</b> ${clean["Contact Person"] || ""}</p>
 
-        <p><b>Mobile:</b> ${c["Mobile Number"] || ""}</p>
+        <p><b>Mobile:</b> ${clean["Mobile Number"] || ""}</p>
 
-        <p><b>Email:</b> ${c["Email Address"] || ""}</p>
+        <p><b>Email:</b> ${clean["Email Address"] || ""}</p>
 
       </div>
     `;
-
   });
 }
+
 search.oninput = function () {
   const text = this.value.toLowerCase();
 
