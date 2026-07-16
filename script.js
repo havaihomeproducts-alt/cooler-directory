@@ -26,8 +26,10 @@ function render(data) {
   }
 
   data.forEach(c => {
+
     list.innerHTML += `
       <div class="card">
+
         <h2>${c["Company Name"] || ""}</h2>
 
         <div class="badge">
@@ -46,9 +48,9 @@ function render(data) {
 
       </div>
     `;
+
   });
 }
-
 search.oninput = function () {
   const text = this.value.toLowerCase();
 
