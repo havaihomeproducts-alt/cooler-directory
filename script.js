@@ -1,1 +1,53 @@
-const list=document.getElementById('list');const search=document.getElementById('search');let companies=[];async function load(){if(API_URL.includes('PASTE_')){list.innerHTML='<p><b>Replace API_URL in index.html with your Apps Script URL.</b></p>';return;}try{const r=await fetch(API_URL);companies=await r.json();render(companies);}catch(e){list.innerHTML='<p>Error loading data.</p>';}}function render(a){if(!a.length){list.innerHTML='<p>No companies found.</p>';return;}list.innerHTML=a.map(c=>`<div class="card"><h2>${c["Company Name"]||"Unnamed Company"}</h2><div class="badge">${c["Business Category"]||c["Select your business category"]||""}</div><p>${c["City"]||""}, ${c["State"]||""}</p><p>${c["Mobile Number"]||""}</p>${c["Website"]?`<a class="btn" target="_blank" href="${c["Website"]}">Website</a>`:""}</div>`).join('');}search.oninput=()=>render(companies.filter(c=>JSON.stringify(c).toLowerCase().includes(search.value.toLowerCase())));load();
+const list = document.getElementById("list");
+const search = document.getElementById("search");
+
+let companies = [];
+
+async function load() {
+  const r = await fetch(API_URL);
+  companies = await r.json();
+  render(companies);
+}
+
+function render(data) {
+  list.innerHTML = "";
+
+  data.forEach(c => {
+
+    list.innerHTML += `
+      <div class="card">
+        <h2>${c["Company Name"]}</h2>
+
+        <div class="badge">
+          ${c["Select your business category"] || ""}
+        </div>
+
+        <p><b>City:</b> ${c["City"] || ""}</p>
+
+        <p><b>State:</b> ${c["State"] || ""}</p>
+
+        <p><b>Contact:</b> ${c["Contact Person"] || ""}</p>
+
+        <p><b>Mobile:</b> ${c["Mobile Number"] || ""}</p>
+
+        <p><b>Email:</b> ${c["Email Address"] || ""}</p>
+
+      </div>
+    `;
+
+  });
+}
+
+search.oninput = function () {
+
+  const text = this.value.toLowerCase();
+
+  render(
+    companies.filter(c =>
+      JSON.stringify(c).toLowerCase().includes(text)
+    )
+  );
+
+};
+
+load();
